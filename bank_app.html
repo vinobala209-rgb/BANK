@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Bank - Digital Banking</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+            width: 90%;
+            max-width: 450px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+            font-weight: 700;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            margin: 10px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 200px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #2196F3, #1976D2);
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 10px 20px rgba(33, 150, 243, 0.3);
+        }
+
+        .form-group {
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.1);
+        }
+
+        .dashboard {
+            display: none;
+        }
+
+        .balance-card {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .transaction-list {
+            max-height: 200px;
+            overflow-y: auto;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .transaction-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+
+        .transaction-item:last-child {
+            border-bottom: none;
+        }
+
+        .amount-input {
+            display: none;
+            margin: 15px 0;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border: 1px solid #c3e6cb;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .logout-btn {
+            background: linear-gradient(45deg, #f44336, #d32f2f);
+            margin-top: 20px;
+        }
+
+        .logout-btn:hover {
+            box-shadow: 0 10px 20px rgba(244, 67, 54, 0.3);
+        }
+
+        .test-users {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Home Page -->
+    <div id="homePage" class="container">
+        <h1>🏦 Secure Bank</h1>
+        <p style="color: #666; margin-bottom: 30px;">Welcome to Digital Banking</p>
+        
+        <!-- TEST USERS - DIRECT LOGIN! -->
+        <div class="test-users">
+            <strong>🧪 Test Login:</strong><br>
+            Acc No: <code>123456789</code> | PIN: <code>1234</code> (₹15,000)<br>
+            Acc No: <code>987654321</code> | PIN: <code>5678</code> (₹50,000)
+        </div>
+        
+        <button class="btn" onclick="showLogin()">Login</button>
+        <button class="btn btn-secondary" onclick="showCreateAccount()">Create New Account</button>
+    </div>
+
+    <!-- Login Form - FIXED TEXT INPUT -->
+    <div id="loginForm" class="container hidden">
+        <h1>🔐 Login</h1>
+        <div class="form-group">
+            <label>Account Number</label>
+            <input type="text" id="accNo" placeholder="ACC123456 or 123456789"> <!-- FIXED: type="text" -->
+        </div>
+        <div class="form-group">
+            <label>PIN</label>
+            <input type="password" id="pin" placeholder="Enter 4-digit PIN">
+        </div>
+        <button class="btn" onclick="login()">Login</button>
+        <button class="btn btn-secondary" onclick="showHome()">Back to Home</button>
+    </div>
+
+    <!-- Create Account Form -->
+    <div id="createForm" class="container hidden">
+        <h1>👤 Create New Account</h1>
+        <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" id="name" placeholder="Enter your full name">
+        </div>
+        <div class="form-group">
+            <label>Initial Deposit (₹)</label>
+            <input type="number" id="initialAmount" placeholder="Enter initial deposit" min="100">
+        </div>
+        <div class="form-group">
+            <label>Create 4-digit PIN</label>
+            <input type="password" id="newPin" placeholder="Enter 4-digit PIN" maxlength="4">
+        </div>
+        <button class="btn" onclick="createAccount()">Create Account</button>
+        <button class="btn btn-secondary" onclick="showHome()">Back to Home</button>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="container dashboard">
+        <h1>💳 Dashboard</h1>
+        <div class="balance-card" id="balanceCard">Available Balance: ₹0</div>
+        
+        <button class="btn" onclick="toggleDeposit()">Deposit Amount</button>
+        <div class="amount-input" id="depositInput">
+            <input type="number" id="depositAmount" placeholder="Enter deposit amount" min="1">
+            <button class="btn" onclick="processDeposit()">OK</button>
+        </div>
+
+        <button class="btn" onclick="toggleWithdraw()">Withdraw Amount</button>
+        <div class="amount-input" id="withdrawInput">
+            <input type="number" id="withdrawAmount" placeholder="Enter withdraw amount" min="1">
+            <button class="btn" onclick="processWithdraw()">OK</button>
+        </div>
+
+        <button class="btn btn-secondary" onclick="checkBalance()">Check Balance</button>
+        <button class="btn btn-secondary" onclick="showTransactions()">Transaction Details</button>
+        <button class="btn logout-btn" onclick="logout()">Logout</button>
+
+        <div id="message" class="success hidden"></div>
+        <div id="transactions" class="transaction-list hidden"></div>
+    </div>
+
+    <script>
+        // ✅ TEST USERS ADDED - DIRECT LOGIN!
+        let users = JSON.parse(localStorage.getItem('bankUsers')) || {
+            "123456789": { name: "Ravi Kumar", balance: 15000, pin: "1234" },
+            "987654321": { name: "Priya Sharma", balance: 50000, pin: "5678" },
+            "111222333": { name: "Arun Patel", balance: 8500, pin: "9999" }
+        };
+        
+        let currentUser = null;
+        let transactions = JSON.parse(localStorage.getItem('transactions')) || {
+            "123456789": [{type: 'credit', amount: 15000, date: new Date().toLocaleString(), description: 'Initial Deposit'}],
+            "987654321": [{type: 'credit', amount: 50000, date: new Date().toLocaleString(), description: 'Initial Deposit'}],
+            "111222333": [{type: 'credit', amount: 8500, date: new Date().toLocaleString(), description: 'Initial Deposit'}]
+        };
+
+        // Save initial test data
+        localStorage.setItem('bankUsers', JSON.stringify(users));
+        localStorage.setItem('transactions', JSON.stringify(transactions));
+
+        function showHome() {
+            document.getElementById('homePage').classList.remove('hidden');
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('createForm').classList.add('hidden');
+            document.getElementById('dashboard').style.display = 'none';
+            hideAllInputs();
+        }
+
+        function showLogin() {
+            document.getElementById('homePage').classList.add('hidden');
+            document.getElementById('loginForm').classList.remove('hidden');
+            document.getElementById('createForm').classList.add('hidden');
+            document.getElementById('dashboard').style.display = 'none';
+        }
+
+        function showCreateAccount() {
+            document.getElementById('homePage').classList.add('hidden');
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('createForm').classList.remove('hidden');
+            document.getElementById('dashboard').style.display = 'none';
+        }
+
+        function generateAccountNumber() {
+            return 'ACC' + Date.now().toString().slice(-6);
+        }
+
+        function createAccount() {
+            const name = document.getElementById('name').value;
+            const initialAmount = parseFloat(document.getElementById('initialAmount').value);
+            const pin = document.getElementById('newPin').value;
+
+            if (!name || !initialAmount || !pin || pin.length !== 4) {
+                alert('Please fill all fields correctly. PIN must be 4 digits.');
+                return;
+            }
+
+            const accNo = generateAccountNumber();
+            users[accNo] = {
+                name: name,
+                balance: initialAmount,
+                pin: pin
+            };
+            transactions[accNo] = [{
+                type: 'credit',
+                amount: initialAmount,
+                date: new Date().toLocaleString(),
+                description: 'Initial Deposit'
+            }];
+
+            localStorage.setItem('bankUsers', JSON.stringify(users));
+            localStorage.setItem('transactions', JSON.stringify(transactions));
+
+            alert(`Account created successfully!\nAccount Number: ${accNo}\nName: ${name}\nSave this account number safely!`);
+            showHome();
+            document.getElementById('createForm').querySelectorAll('input').forEach(input => input.value = '');
+        }
+
+        function login() {
+            const accNo = document.getElementById('accNo').value;
+            const pin = document.getElementById('pin').value;
+
+            if (users[accNo] && users[accNo].pin === pin) {
+                currentUser = accNo;
+                document.getElementById('homePage').classList.add('hidden');
+                document.getElementById('loginForm').classList.add('hidden');
+                document.getElementById('createForm').classList.add('hidden');
+                document.getElementById('dashboard').style.display = 'block';
+                updateBalance();
+            } else {
+                alert('Invalid Account Number or PIN!\n\n🧪 Test: 123456789 / 1234');
+            }
+        }
+
+        function updateBalance() {
+            const balance = users[currentUser].balance;
+            document.getElementById('balanceCard').textContent = `Available Balance: ₹${balance.toLocaleString()}`;
+        }
+
+        function toggleDeposit() {
+            const input = document.getElementById('depositInput');
+            input.style.display = input.style.display === 'block' ? 'none' : 'block';
+            hideOtherInputs('depositInput');
+        }
+
+        function toggleWithdraw() {
+            const input = document.getElementById('withdrawInput');
+            input.style.display = input.style.display === 'block' ? 'none' : 'block';
+            hideOtherInputs('withdrawInput');
+        }
+
+        function hideOtherInputs(activeId) {
+            const inputs = ['depositInput', 'withdrawInput'];
+            inputs.forEach(id => {
+                if (id !== activeId) {
+                    document.getElementById(id).style.display = 'none';
+                }
+            });
+        }
+
+        function hideAllInputs() {
+            document.getElementById('depositInput').style.display = 'none';
+            document.getElementById('withdrawInput').style.display = 'none';
+        }
+
+        function processDeposit() {
+            const amount = parseFloat(document.getElementById('depositAmount').value);
+            if (amount > 0) {
+                users[currentUser].balance += amount;
+                transactions[currentUser].unshift({
+                    type: 'credit',
+                    amount: amount,
+                    date: new Date().toLocaleString(),
+                    description: 'Cash Deposit'
+                });
+                localStorage.setItem('bankUsers', JSON.stringify(users));
+                localStorage.setItem('transactions', JSON.stringify(transactions));
+                updateBalance();
+                showMessage(`₹${amount.toLocaleString()} deposited successfully!`);
+                document.getElementById('depositAmount').value = '';
+            }
+        }
+
+        function processWithdraw() {
+            const amount = parseFloat(document.getElementById('withdrawAmount').value);
+            const balance = users[currentUser].balance;
+            
+            if (amount > balance) {
+                alert('Insufficient balance!');
+                return;
+            }
+            if (amount > 0) {
+                users[currentUser].balance -= amount;
+                transactions[currentUser].unshift({
+                    type: 'debit',
+                    amount: amount,
+                    date: new Date().toLocaleString(),
+                    description: 'Cash Withdrawal'
+                });
+                localStorage.setItem('bankUsers', JSON.stringify(users));
+                localStorage.setItem('transactions', JSON.stringify(transactions));
+                updateBalance();
+                showMessage(`₹${amount.toLocaleString()} withdrawn successfully!`);
+                document.getElementById('withdrawAmount').value = '';
+            }
+        }
+
+        function checkBalance() {
+            updateBalance();
+            showMessage('Balance updated!');
+        }
+
+        function showTransactions() {
+            const transDiv = document.getElementById('transactions');
+            const userTrans = transactions[currentUser] || [];
+            
+            transDiv.innerHTML = '';
+            if (userTrans.length === 0) {
+                transDiv.innerHTML = '<p>No transactions found.</p>';
+            } else {
+                userTrans.forEach(trans => {
+                    const item = document.createElement('div');
+                    item.className = 'transaction-item';
+                    item.innerHTML = `
+                        <strong>${trans.description}</strong><br>
+                        ${trans.type === 'credit' ? '+' : '-'}$₹${trans.amount.toLocaleString()} 
+                        <span style="float:right; color:#666;">${trans.date}</span>
+                    `;
+                    transDiv.appendChild(item);
+                });
+            }
+            transDiv.classList.toggle('hidden');
+        }
+
+        function showMessage(text) {
+            const msgDiv = document.getElementById('message');
+            msgDiv.textContent = text;
+            msgDiv.classList.remove('hidden');
+            setTimeout(() => {
+                msgDiv.classList.add('hidden');
+            }, 3000);
+        }
+
+        function logout() {
+            currentUser = null;
+            showHome();
+        }
+    </script>
+</body>
+</html>
